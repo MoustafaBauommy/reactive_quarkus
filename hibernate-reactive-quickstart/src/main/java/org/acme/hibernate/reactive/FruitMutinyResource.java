@@ -32,9 +32,15 @@ public class FruitMutinyResource {
 
     @GET
     public Uni<List<Fruit>> get() {
+
+
         return sf.withTransaction((s,t) -> s
                 .createNamedQuery("Fruits.findAll", Fruit.class)
-                .getResultList()
+                .getResultList().log("flux")
+                .map( f->{
+                    var test=f;
+                    return f;
+                } )
         );
     }
 
@@ -75,6 +81,9 @@ public class FruitMutinyResource {
                 .onItem().ifNull().failWith(new WebApplicationException("Fruit missing from database.", NOT_FOUND))
                 // If entity exists then delete it
                 .call(s::remove))
-                .replaceWith(Response.ok().status(NO_CONTENT)::build);    }
+                .replaceWith(Response.ok().status(NO_CONTENT)::build);
+
+
+    }
 
 }
